@@ -9,18 +9,6 @@ export default class StepController {
         if (!this.checkCellColor(to)) { return; }
        
         if (this.isBusy(to)) { return; } 
-
-        // const isQueen = this.isQueen(from);
-
-        // if (isQueen) {
-        //     this.detectQueenHitOpponent(from, to);
-        // } else {
-        //     this.detectChipHitOpponent(from, to);
-        // }
-        
-        // if ((!this.hitsChips) && !isQueen) {
-        //     if (this.isFar(from, to)) { return };
-        // }
     
         return true;
     }
@@ -103,8 +91,6 @@ export default class StepController {
 
             if ((range !== from.range) && (range !== 0)) {
                 hitsChips = {name: row + '_' + col, range: range, col, row};
-                // this.model.paths[row][col] = 0;
-                // this.model.hitsChips[range].push(null);
             }
             return hitsChips;
         }
