@@ -6,11 +6,15 @@ export default class Chip {
         });
         this.mesh = new THREE.Mesh(settings.geom['chip'].clone());
         this.mesh.material = pieceMaterial;
-        // this.mesh.rotation.x = -Math.PI;
         this.mesh.name = chipName; 
         this.mesh.castShadow = true;
         this.mesh.type = 'chip';
         this.mesh.range = range;
+
+        if ((range === 22) || (range === 11)) {
+            this.mesh.rotation.x = -Math.PI;
+            this.mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -1, 0));
+        }
     }
 
     moveTo(x, y, z) {

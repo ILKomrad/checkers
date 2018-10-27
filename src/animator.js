@@ -70,15 +70,15 @@ export default class Animator {
             .onUpdate(() => {
                 obj.rotation.x = from.x;
                 let pers = from.x / to.x;
+                obj.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -0.04, 0));
 
                 if (pers < 0.5) {
-                    obj.position.y = (pers / 0.5) * 4;
+                    obj.position.y = (pers / 0.5) * 5;
                 } else {
-                    obj.position.y = 5 - ((pers - 0.5) / 0.5) * 4;
+                    obj.position.y = 5 - ((pers - 0.5) / 0.5) * 5;
                 }
             })
             .onComplete(() => {
-                obj.position.y = 1;
                 r();
             })
             .start();

@@ -111,7 +111,7 @@ export default class Desk {
 
     movePiece(pieceName, cellName, anim, clbck) {
         let chipMesh = this.findChip(pieceName);
-        console.log( cellName )
+
         if (chipMesh) {
             let cellTo = this.findCell(cellName),
                 pos = cellTo.getPosition();
@@ -119,11 +119,7 @@ export default class Desk {
             if (anim) {
                 this._animator.animationMove(pos, chipMesh, clbck);
             } else {
-                if ((chipMesh.getRange() === 22) || (chipMesh.getRange() === 11)) {
-                    chipMesh.moveTo(pos.x, pos.y + 1, pos.z);
-                } else {
-                    chipMesh.moveTo(pos.x, pos.y, pos.z);
-                }
+                chipMesh.moveTo(pos.x, pos.y, pos.z);
             }
             chipMesh.mesh.name = cellName;
         }
