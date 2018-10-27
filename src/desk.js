@@ -111,7 +111,7 @@ export default class Desk {
 
     movePiece(pieceName, cellName, anim, clbck) {
         let chipMesh = this.findChip(pieceName);
-        
+        console.log( cellName )
         if (chipMesh) {
             let cellTo = this.findCell(cellName),
                 pos = cellTo.getPosition();

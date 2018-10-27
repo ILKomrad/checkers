@@ -18,15 +18,7 @@ export default class Presenter {
             this.addListeners();
             this.stepController = new StepController(model);
             this.socket.socket.on('opponent_step', (opponentStep) => {
-                model.updatePaths(opponentStep.paths);
-                model.updateHits(opponentStep.hitsChips); 
-                view.desk.hits = model.hitsChips;
-
-                view.desk.movePiece(opponentStep.chipName.name, opponentStep.toObj.name, true, () => {
-                    if (opponentStep.hitChip) {
-                        view.desk.removeFromDesk(opponentStep.hitChip.name, opponentStep.hitChip.range);
-                    }
-                });
+                this.opponentStepHandler(opponentStep);
             });
         });
     }
@@ -41,6 +33,22 @@ export default class Presenter {
         const array = name.split('_');
 
         return {row: +array[0], col: +array[1]};
+    }
+
+    opponentStepHandler(opponentStep) {
+        this.model.updatePaths(opponentStep.paths);
+        this.model.updateHits(opponentStep.hitsChips); 
+        this.view.desk.hits = this.model.hitsChips;
+        this.view.desk.movePiece(opponentStep.chipName.name, opponentStep.toObj.name, true, () => {
+            if (opponentStep.hitChip) {
+                this.view.desk.removeFromDesk(opponentStep.hitChip.name, opponentStep.hitChip.range);
+            }
+
+            if (opponentStep.queen) {
+                this.view.setQueen(opponentStep.queen.name, opponentStep.queen.range);
+            }
+            console.log( this.model.paths )
+        });
     }
 
     stepHandler(fromName, toName) {
@@ -85,6 +93,7 @@ export default class Presenter {
     }
 
     makeStep(fromObj, toObj) {
+        let queen;
         const that = this,
             isQueen = that.stepController.isQueen(fromObj);
         that.hitChip = that.stepController.getHitChip(fromObj, toObj, isQueen);
@@ -101,19 +110,21 @@ export default class Presenter {
         if (that.stepController.detectQueen(fromObj, toObj)) {
             fromObj.range = +(fromObj.range + '' + fromObj.range);
             that.view.setQueen(fromObj.name, fromObj.range);
+            queen = {name: toObj.name, range: fromObj.range};
         }
 
         that.model.updatePath(fromObj.row, fromObj.col, 0);
         that.model.updatePath(toObj.row, toObj.col, fromObj.range);
         that.view.desk.movePiece(fromObj.name, toObj.name);
-        that.afterStep(fromObj, toObj);
+        that.afterStep(fromObj, toObj, queen);
     }
 
-    afterStep(fromObj, toObj) {
+    afterStep(fromObj, toObj, queen) {
         const that = this,
             data = {
                 chipName: fromObj,
                 toObj,
+                queen,
                 hitChip: that.hitChip,
                 paths: that.model.paths,
                 hitsChips: that.model.hitsChips
