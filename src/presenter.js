@@ -21,7 +21,6 @@ export default class Presenter {
                 model.updatePaths(opponentStep.paths);
                 model.updateHits(opponentStep.hitsChips); 
                 view.desk.hits = model.hitsChips;
-                console.log( opponentStep )
 
                 view.desk.movePiece(opponentStep.chipName.name, opponentStep.toObj.name, true, () => {
                     if (opponentStep.hitChip) {
