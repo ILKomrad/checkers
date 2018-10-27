@@ -33,6 +33,10 @@ export default class Model {
         return this.cells;
     }
 
+    getHits() {
+        return this.hitsChips;
+    }
+
     getRange(row, col) {
         return this.paths[row][col];
     }

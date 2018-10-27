@@ -11,8 +11,8 @@ class Settings {
         this.chipsColors = {
             1: 0xffffff,
             11: 0xffffff,
-            2: 0x000000,
-            22: 0x000000
+            2: 'red',
+            22: 'red'
         };
         this.zoomFar = 7;
         this.treeTexture = new THREE.TextureLoader().load( 'assets/floor-wood.jpg' );

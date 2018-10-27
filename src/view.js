@@ -11,12 +11,12 @@ export default class View {
         this.settings = new Settings();
     }
 
-    init(paths, cells) {
+    init(paths, cells, hits) {
         this.settings.waitLoadData()
         .then(() => {
             this.renderer.createEnvironment();
             this.desk = new Desk(this.renderer, this.settings);
-            this.desk.create(paths, cells);
+            this.desk.create(paths, cells, hits);
             this.eventProcessor = new EventProcessor(this.renderer, this.desk);
             this.render();
             this.addListeners();
@@ -26,10 +26,10 @@ export default class View {
         })
     }
 
-    setQueen(queenName) {
+    setQueen(queenName, range) {
         const mesh = this.desk.findChip(queenName),
             queenPos = mesh.getPosition();
-        mesh.mesh.range = +(mesh.mesh.range + '' + mesh.mesh.range);
+        mesh.mesh.range = range;
         this.animator.zoomToObject(this.renderer.getCamera(), this.renderer.getControls(), queenPos)
         .then(() => {
             return this.animator.rotateChip(mesh.mesh, Math.PI);

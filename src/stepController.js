@@ -55,26 +55,27 @@ export default class StepController {
     }
 
     getHitByQueen(from, to) {
-        let maxColObj, minColObj, hitsChips = [];
+        let maxRowObj, minRowObj, hitsChips = [], directionCol = 1;
 
-        if (from.col > to.col) {
-            maxColObj = from;
-            minColObj = to;
+        if (from.row > to.row) {
+            maxRowObj = from;
+            minRowObj = to;
         } else {
-            maxColObj = to;
-            minColObj = from;
+            maxRowObj = to;
+            minRowObj = from;
         }
 
-        for (let z = (maxColObj.col - 1), rowIndex = 1; z > minColObj.col; z--) {
-            let row = maxColObj.row + rowIndex,
-                col = z,
-                range = this.model.paths[row][col];
+        if (minRowObj.col > maxRowObj.col) {
+            directionCol = -1;
+        }
 
+        for (let row = (minRowObj.row + 1), col = minRowObj.col, colIndex = 1; row < maxRowObj.row; row++) {
+            col += colIndex * directionCol;
+            const range = this.model.paths[row][col];
+          
             if ((range !== 0) && (this.model.paths[from.row][from.col] !== +(range + '' + range))) {
                 hitsChips.push({name: row + '_' + col, range: range, col, row});
             }
-    
-            rowIndex++;
         }
 
         if (hitsChips.length === 1) {
@@ -94,5 +95,17 @@ export default class StepController {
             }
             return hitsChips;
         }
+    }
+
+    getHitChip(fromObj, toObj, isQueen) {
+        let hitChip;
+
+        if (isQueen) { 
+            hitChip =  this.getHitByQueen(fromObj, toObj); 
+        } else {
+            hitChip =  this.getHitByChip(fromObj, toObj); 
+        }
+
+        return hitChip;
     }
 }

@@ -17,5 +17,10 @@ export default class Socket {
         })
     }
 
-    
+    async emit(event, obj) {
+        return new Promise(res => {
+            this.socket.emit(event, obj);
+            res();
+        })
+    }
 }

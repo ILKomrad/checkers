@@ -14,9 +14,21 @@ export default class Presenter {
             model.updatePaths(data.paths);
             model.updateCells(data.cells);
             model.updateHits(data.hitsChips); 
-            view.init(model.getPaths(), model.getCells());
+            view.init(model.getPaths(), model.getCells(), model.getHits());
             this.addListeners();
             this.stepController = new StepController(model);
+            this.socket.socket.on('opponent_step', (opponentStep) => {
+                model.updatePaths(opponentStep.paths);
+                model.updateHits(opponentStep.hitsChips); 
+                view.desk.hits = model.hitsChips;
+                console.log( opponentStep )
+
+                view.desk.movePiece(opponentStep.chipName.name, opponentStep.toObj.name, true, () => {
+                    if (opponentStep.hitChip) {
+                        view.desk.removeFromDesk(opponentStep.hitChip.name, opponentStep.hitChip.range);
+                    }
+                });
+            });
         });
     }
 
@@ -49,20 +61,9 @@ export default class Presenter {
     getObjectFromPaths(name) {
         const obj = this.getColAndRow(name);
         obj.range = this.model.getRange(obj.row, obj.col);
+        obj.name = name;
 
         return obj;
-    }
-
-    getHitChip(fromObj, toObj, isQueen) {
-        let hitChip;
-
-        if (isQueen) { 
-            hitChip =  this.stepController.getHitByQueen(fromObj, toObj); 
-        } else {
-            hitChip =  this.stepController.getHitByChip(fromObj, toObj); 
-        }
-
-        return hitChip;
     }
 
     removeHitChip(hitChip) {
@@ -74,24 +75,43 @@ export default class Presenter {
 
     makeStep(fromObj, toObj) {
         const that = this,
-            isQueen = that.stepController.isQueen(fromObj),
-            hitChip = that.getHitChip(fromObj, toObj, isQueen);
-
-        if (!hitChip) {
+            isQueen = that.stepController.isQueen(fromObj);
+        that.hitChip = that.stepController.getHitChip(fromObj, toObj, isQueen);
+        
+        if (!that.hitChip) {
             if (!isQueen && that.stepController.isFar(fromObj, toObj)) {
                 that.cancelStep(fromObj);
                 return;
             }
         } else {
-            that.removeHitChip(hitChip);
+            that.removeHitChip(that.hitChip);
+        }
+
+        if (that.stepController.detectQueen(fromObj, toObj)) {
+            fromObj.range = +(fromObj.range + '' + fromObj.range);
+            that.view.setQueen(fromObj.name, fromObj.range);
         }
 
         that.model.updatePath(fromObj.row, fromObj.col, 0);
         that.model.updatePath(toObj.row, toObj.col, fromObj.range);
-        that.view.desk.makeStep(fromObj.row + '_' + fromObj.col, toObj.row + '_' + toObj.col);
+        that.view.desk.movePiece(fromObj.name, toObj.name);
+        that.afterStep(fromObj, toObj);
+    }
+
+    afterStep(fromObj, toObj) {
+        const that = this,
+            data = {
+                chipName: fromObj,
+                toObj,
+                hitChip: that.hitChip,
+                paths: that.model.paths,
+                hitsChips: that.model.hitsChips
+            };
+        
+        this.socket.emit('makeStep', JSON.stringify(data));
     }
 
     cancelStep(fromObj) {
-        this.view.desk.makeStep(fromObj.row + '_' + fromObj.col, fromObj.row + '_' + fromObj.col);
+        this.view.desk.movePiece(fromObj.row + '_' + fromObj.col, fromObj.row + '_' + fromObj.col);
     }
 }

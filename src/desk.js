@@ -11,20 +11,13 @@ export default class Desk {
         this._animator = new Animator();
     }
 
-    create(paths, cells) {
+    create(paths, cells, hits) {
         this.paths = paths;
         this.cells = cells;
+        this.hits = {};
         this.createBorder();
         this.fillDesk();
-    }
-
-    makeStep(obj, to, hit) {
-        this.movePiece(obj, to);
-
-        //удалить
-        if (hit && hit.name) {
-            this.removeFromDesk(hit.name, hit.range);
-        }
+        this.addHitChips(hits);
     }
 
     createBorder() {
@@ -50,6 +43,20 @@ export default class Desk {
         face.rotation.x = -Math.PI / 2;
         face.name = 'borderFace';
         this.renderer.addToScene(face);
+    }
+
+    addHitChips(hits) {
+       if (hits) {
+           const that = this;
+           
+           for (let c in hits) {
+               hits[c].forEach((hit, index) => {
+                that.hits[c] = hits[c].slice(index);
+                const pos = this.getPosForHitChip(+c);
+                this.addChip(pos.x, pos.z, null, null, c);
+               })
+           }
+       }
     }
 
     fillDesk() {
@@ -102,7 +109,7 @@ export default class Desk {
         return chip;
     }
 
-    movePiece(pieceName, cellName, anim) {
+    movePiece(pieceName, cellName, anim, clbck) {
         let chipMesh = this.findChip(pieceName);
         
         if (chipMesh) {
@@ -124,14 +131,24 @@ export default class Desk {
     
     removeFromDesk(name, range) {
         const that = this,
-            place = that.settings.hitsChipsPlaces,
             chipMesh = that.findChip(name),
-            pos = Object.assign({}, place[range], {
-                x: place[range].x + (that.hits[range].length - 1) * that.settings.cellSize.x
-            });
+            pos = this.getPosForHitChip(range);
 
         that._animator.animationMove(pos, chipMesh);
         chipMesh.mesh.name = '';
         chipMesh.mesh.hit = true;
+    }
+
+    getPosForHitChip(range) {
+        const place = this.settings.hitsChipsPlaces,
+            pos = Object.assign({}, place[range]);
+
+        if ((range === 2) || (range === 22)) {
+            pos.x = place[range].x - (this.hits[range].length - 1) * this.settings.cellSize.x
+        } else {
+            pos.x = place[range].x + (this.hits[range].length - 1) * this.settings.cellSize.x;
+        }
+
+        return pos;
     }
 }
