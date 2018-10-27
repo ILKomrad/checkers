@@ -68,9 +68,21 @@ export default class Presenter {
 
     removeHitChip(hitChip) {
         this.model.updatePath(hitChip.row, hitChip.col, 0);
+        hitChip.range = this.transformRange(hitChip.range);
         this.model.addHitChip(hitChip.range);
         this.view.desk.hits = this.model.hitsChips;
         this.view.desk.removeFromDesk(hitChip.name, hitChip.range);
+    }
+    
+    //for queen 
+    transformRange(range) {
+        if (range === 11) {
+            range = 1;
+        } else if (range === 22) {
+            range = 2;
+        }
+
+        return range;
     }
 
     makeStep(fromObj, toObj) {

@@ -17,7 +17,7 @@ export default class Model {
         this.paths[row][col] = val;
     }
 
-    addHitChip(range) {
+    addHitChip(range) {        
         this.hitsChips[range].push(null);
     }
 

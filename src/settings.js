@@ -32,9 +32,9 @@ class Settings {
         };
         this.hitsChipsPlaces = {
             1: {x: -(th.desk.size.x / 2) + th.cellSize.x / 2, y: th.desk.pos.y, z: (th.desk.size.y / 2) + th.cellSize.y * 0.75},
-            1: {x: -(th.desk.size.x / 2) + th.cellSize.x / 2, y: th.desk.pos.y, z: (th.desk.size.y / 2) + th.cellSize.y * 0.75},
+            11: {x: -(th.desk.size.x / 2) + th.cellSize.x / 2, y: th.desk.pos.y, z: (th.desk.size.y / 2) + th.cellSize.y * 0.75},
             2: {x: (th.desk.size.x / 2) - th.cellSize.x / 2, y: th.desk.pos.y, z: -(th.desk.size.y / 2) - th.cellSize.y * 0.75},
-            2: {x: (th.desk.size.x / 2) - th.cellSize.x / 2, y: th.desk.pos.y, z: -(th.desk.size.y / 2) - th.cellSize.y * 0.75}
+            22: {x: (th.desk.size.x / 2) - th.cellSize.x / 2, y: th.desk.pos.y, z: -(th.desk.size.y / 2) - th.cellSize.y * 0.75}
         }
     }
 
