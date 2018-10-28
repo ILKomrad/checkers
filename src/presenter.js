@@ -47,7 +47,6 @@ export default class Presenter {
             if (opponentStep.queen) {
                 this.view.setQueen(opponentStep.queen.name, opponentStep.queen.range);
             }
-            console.log( this.model.paths )
         });
     }
 
