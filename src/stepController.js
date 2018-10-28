@@ -82,10 +82,11 @@ export default class StepController {
     }
 
     chechSimilarRange(range, list) {
-        let similar;
+        let similar,
+            r = this.transformRange(range);
 
         list.forEach(i => {
-            if (i.range === range) {
+            if (this.transformRange(i.range) === r) {
                 similar = true;
             }
         });
@@ -119,5 +120,18 @@ export default class StepController {
         }
 
         return hitChip;
+    }
+
+    //for queen 
+    transformRange(range) {
+        let r = range;
+
+        if (r === 11) {
+            r = 1;
+        } else if (r === 22) {
+            r = 2;
+        }
+
+        return r;
     }
 }

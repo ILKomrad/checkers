@@ -76,24 +76,11 @@ export default class Presenter {
     removeHitChip() {
         if (this.hitChip) {
             this.model.updatePath(this.hitChip.row, this.hitChip.col, 0);
-            this.hitChip.range = this.transformRange(this.hitChip.range);
+            this.hitChip.range = this.srepController.transformRange(this.hitChip.range);
             this.model.addHitChip(this.hitChip.range);
             this.view.desk.hits = this.model.hitsChips;
             this.view.desk.removeFromDesk(this.hitChip.name, this.hitChip.range);
         }
-    }
-    
-    //for queen 
-    transformRange(range) {
-        let r = range;
-
-        if (r === 11) {
-            r = 1;
-        } else if (r === 22) {
-            r = 2;
-        }
-
-        return r;
     }
 
     postValidationStep(fromObj, toObj, isQueen) {
@@ -118,26 +105,26 @@ export default class Presenter {
 
         if (!this.postValidationStep(fromObj, toObj, isQueen)) {
             return;
+        } else {
+            if (that.stepController.detectQueen(fromObj, toObj)) {
+                fromObj.range = +(fromObj.range + '' + fromObj.range);
+                that.view.setQueen(fromObj.name, fromObj.range);
+                queen = {name: toObj.name, range: fromObj.range};
+            }
+    
+            that.hitChip = that.hitChip[0];
+            that.removeHitChip();
+            that.model.updatePath(fromObj.row, fromObj.col, 0);
+            that.model.updatePath(toObj.row, toObj.col, fromObj.range);
+            that.view.desk.movePiece(fromObj.name, toObj.name);
+            that.sendSocket(fromObj, toObj, queen);
         }
-
-        if (that.stepController.detectQueen(fromObj, toObj)) {
-            fromObj.range = +(fromObj.range + '' + fromObj.range);
-            that.view.setQueen(fromObj.name, fromObj.range);
-            queen = {name: toObj.name, range: fromObj.range};
-        }
-
-        that.hitChip = that.hitChip[0];
-        that.removeHitChip();
-        that.model.updatePath(fromObj.row, fromObj.col, 0);
-        that.model.updatePath(toObj.row, toObj.col, fromObj.range);
-        that.view.desk.movePiece(fromObj.name, toObj.name);
-        that.sendSocket(fromObj, toObj, queen);
     }
 
     checkHitOnValid(fromObj) {
         if (this.hitChip.length > 1) {
             return;
-        } else if (this.stepController.chechSimilarRange(this.transformRange(fromObj.range), this.hitChip)) {
+        } else if (this.stepController.chechSimilarRange(fromObj.range, this.hitChip)) {
             return;
         }
 
