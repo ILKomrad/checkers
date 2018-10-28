@@ -73,41 +73,23 @@ export default class Presenter {
         return obj;
     }
 
-    removeHitChip() {
-        if (this.hitChip) {
-            this.model.updatePath(this.hitChip.row, this.hitChip.col, 0);
-            this.hitChip.range = this.transformRange(this.hitChip.range);
-            this.model.addHitChip(this.hitChip.range);
-            this.view.desk.hits = this.model.hitsChips;
-            this.view.desk.removeFromDesk(this.hitChip.name, this.hitChip.range);
-        }
+    removeHitChip(hitChip) {
+        this.model.updatePath(hitChip.row, hitChip.col, 0);
+        hitChip.range = this.transformRange(hitChip.range);
+        this.model.addHitChip(hitChip.range);
+        this.view.desk.hits = this.model.hitsChips;
+        this.view.desk.removeFromDesk(hitChip.name, hitChip.range);
     }
     
     //for queen 
     transformRange(range) {
-        let r = range;
-
-        if (r === 11) {
-            r = 1;
-        } else if (r === 22) {
-            r = 2;
+        if (range === 11) {
+            range = 1;
+        } else if (range === 22) {
+            range = 2;
         }
 
-        return r;
-    }
-
-    postValidationStep(fromObj, toObj, isQueen) {
-        if (!this.hitChip.length) {
-            if (!isQueen && this.stepController.isFar(fromObj, toObj)) {
-                this.cancelStep(fromObj);
-                return;
-            }
-        } else if (!this.checkHitOnValid(fromObj)) {
-            this.cancelStep(fromObj);
-            return;
-        }
-
-        return true;
+        return range;
     }
 
     makeStep(fromObj, toObj) {
@@ -115,9 +97,14 @@ export default class Presenter {
         const that = this,
             isQueen = that.stepController.isQueen(fromObj);
         that.hitChip = that.stepController.getHitChip(fromObj, toObj, isQueen);
-
-        if (!this.postValidationStep(fromObj, toObj, isQueen)) {
-            return;
+        
+        if (!that.hitChip) {
+            if (!isQueen && that.stepController.isFar(fromObj, toObj)) {
+                that.cancelStep(fromObj);
+                return;
+            }
+        } else {
+            that.removeHitChip(that.hitChip);
         }
 
         if (that.stepController.detectQueen(fromObj, toObj)) {
@@ -126,22 +113,10 @@ export default class Presenter {
             queen = {name: toObj.name, range: fromObj.range};
         }
 
-        that.hitChip = that.hitChip[0];
-        that.removeHitChip();
         that.model.updatePath(fromObj.row, fromObj.col, 0);
         that.model.updatePath(toObj.row, toObj.col, fromObj.range);
         that.view.desk.movePiece(fromObj.name, toObj.name);
         that.sendSocket(fromObj, toObj, queen);
-    }
-
-    checkHitOnValid(fromObj) {
-        if (this.hitChip.length > 1) {
-            return;
-        } else if (this.stepController.chechSimilarRange(this.transformRange(fromObj.range), this.hitChip)) {
-            return;
-        }
-
-        return true;
     }
 
     sendSocket(fromObj, toObj, queen) {

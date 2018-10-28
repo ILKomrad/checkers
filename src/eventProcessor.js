@@ -19,6 +19,7 @@ export default class EventProcessor {
             const target = intersects[item].object;
            
             if (target.type === 'chip') {
+                console.log( target.name );
                 that.dragAndDrop.start(target, that.mouse.getRaycaster(), false, function(obj) {
                     const e = new CustomEvent('step', {'detail': {'from': target.name, 'to': obj}});
                     window.dispatchEvent(e);

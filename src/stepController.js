@@ -73,28 +73,40 @@ export default class StepController {
             col += colIndex * directionCol;
             const range = this.model.paths[row][col];
           
-            if ((range !== 0) && (this.model.paths[from.row][from.col] !== +(range + '' + range))) {
+            if (range !== 0) {
                 hitsChips.push({name: row + '_' + col, range: range, col, row});
             }
         }
 
-        if (hitsChips.length === 1) {
-            return hitsChips[0];
-        }
+        return hitsChips;
+    }
+
+    chechSimilarRange(range, list) {
+        let similar;
+
+        list.forEach(i => {
+            if (i.range === range) {
+                similar = true;
+            }
+        });
+
+        return similar;
     }
 
     getHitByChip(from, to) {
+        const hitsChips = [];
+
         if ((Math.abs(to.row - from.row) === 2) && (Math.abs(to.col - from.col) === 2)) {
             let row = (to.row + from.row) / 2,
                 col = (to.col + from.col) / 2,
-                hitsChips,
                 range = this.model.paths[row][col];
 
-            if ((range !== from.range) && (range !== 0)) {
-                hitsChips = {name: row + '_' + col, range: range, col, row};
+            if (range !== 0) {
+                hitsChips.push({name: row + '_' + col, range: range, col, row});
             }
-            return hitsChips;
         }
+
+        return hitsChips;
     }
 
     getHitChip(fromObj, toObj, isQueen) {
