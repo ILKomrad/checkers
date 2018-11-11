@@ -10,6 +10,7 @@ export default class DragAndDrop {
         th.renderer.disableRotate();
         document.addEventListener('mousemove', drug);
         document.addEventListener('mouseup', drop);
+        window.dispatchEvent(new CustomEvent('stepStart', {}));
 
         function drug(e) {
             th.mouse.setMousePosition(e);
@@ -29,7 +30,7 @@ export default class DragAndDrop {
 
                 for (let item in intersects) {       
                     if (intersects[item].object.type === 'cell') {
-                        onDrop(intersects[item].object.name)
+                        onDrop(intersects[item].object.name);
                     }
                 }
             }

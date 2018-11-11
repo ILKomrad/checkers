@@ -1,0 +1,136 @@
+body, html, * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+} 
+
+.interface {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+}
+
+.white {
+    left: 0;
+}
+
+.black {
+    right: 0;
+}
+
+.box {
+    position: absolute;
+    width: 18vmin;
+    height: 18vmin;
+    background: rgba(255, 255, 255, .5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    opacity: 0.19;
+    transition: opacity .5s;
+}
+
+.box.active {
+    opacity: 1;
+}
+
+.box__chip {
+    width: 10vmin;
+    height: 10vmin;
+    border-radius: 50%;
+}
+
+.white .box__chip {
+    background: #fff;
+}
+
+.black .box__chip {
+    background: #000;
+}
+
+.white {
+    border-radius: 0 0 2.5vmin 0;
+}
+
+.black {
+    border-radius: 0 0 0 2.5vmin;
+}
+
+.box__title {
+    width: 100%;
+    text-align: center;
+    font: 2vmin verdana;
+    padding-top: 1.5vmin;
+    text-transform: uppercase;
+}
+
+.box__alert {
+    text-align: center;
+    font: 3vmin verdana;
+    padding: 2vmin 3vmin;
+    text-transform: uppercase;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: all .5s;
+    border-radius: 1.5vmin 1.5vmin 0 0;
+}
+
+.box__alert.showMessage,
+.box__alert.showError {
+    opacity: 1;
+}
+
+.box__alert.showMessage {
+    background: #6d9f5f;
+    color: #fff;
+}
+
+.box__alert.showError {
+    background: #ef5a5a;
+    color: #fff;
+}
+
+.box-score {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+    border-radius: 0 0 2vmin 2vmin;
+    border: 2px solid #fff;
+    border-top: none;
+    text-align: center;
+    font: 2vmin verdana;
+    color: #fff;
+    padding: 2vmin 4vmin;
+    text-transform: uppercase;
+}
+
+.box-score__value {
+    display: block;
+    font: 3vmin verdana;
+    color: #fff;
+    margin-top: 1.5vmin;
+}
+
+.sidebar {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn {
+    padding: 2vmin;
+    color: #fff;
+    background: red;
+    border-radius: 1vmin;
+    border: none;
+}

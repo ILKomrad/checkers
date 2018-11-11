@@ -1,3 +1,4 @@
+//2 - red, 1 - white
 class Settings {
     constructor() {
         const th = this;

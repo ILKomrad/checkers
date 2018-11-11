@@ -1,9 +1,9 @@
 export default class Cell {
     constructor(color, texture, col, row, colorName) {
         const symGeometry = new THREE.PlaneGeometry(10, 10);
-        const bodyMaterial = new THREE.MeshBasicMaterial({
-            //color: color,
-            //map: texture,
+        const bodyMaterial = new THREE.MeshPhongMaterial({
+            color: color,
+            map: texture,
             transparent: true
         });
         // const bodyMaterial = new THREE.MeshPhongMaterial({

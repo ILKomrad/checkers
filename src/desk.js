@@ -1,7 +1,7 @@
 import Cell from './cell';
 import Chip from './chip';
 import Animator from './animator';
-
+//red = 2, white = 1
 export default class Desk {
     constructor (renderer, settings) {
         this.renderer = renderer;
@@ -12,18 +12,16 @@ export default class Desk {
     }
 
     create(paths, cells, hits) {
-        this.paths = paths;
-        this.cells = cells;
-        this.hits = {};
         this.createBorder();
-        this.fillDesk();
+        this.newGame(paths, cells, hits);
+        this.fillDesk(true, false);
         this.addHitChips(hits);
     }
 
     createBorder() {
-        const bodyMaterial = new THREE.MeshBasicMaterial({
-            //color: this.settings.desk.deskColor,
-           // map: this.settings.treeTexture,
+        const bodyMaterial = new THREE.MeshPhongMaterial({
+            color: this.settings.desk.deskColor,
+            map: this.settings.treeTexture,
             transparent: true
         });
         const symGeometry = new THREE.PlaneGeometry(10, 10);
@@ -53,30 +51,45 @@ export default class Desk {
                hits[c].forEach((hit, index) => {
                 that.hits[c] = hits[c].slice(index);
                 const pos = this.getPosForHitChip(+c);
-                this.addChip(pos.x, pos.z, null, null, c);
+                this.addChip(pos.x, pos.y, pos.z, null, null, c);
                })
            }
        }
     }
 
-    fillDesk() {
+    newGame(paths, cells, hits) {
+        this.paths = paths;
+        this.cells = cells;
+        this.hits = {};
+        this._chipsMeshs.forEach(chip => {
+            this.renderer.removeFromScene(chip.mesh);
+            chip = null;
+        });
+        this._chipsMeshs = [];
+        this.fillDesk(false, true);
+        console.log( this._chipsMeshs );
+        this.addHitChips(hits);
+    }
+
+    fillDesk(onlyCells, onlyChips) {
         let z = 35;
         for (let t = 0; t < this.cells.length; t++) {
             let x = 35;
 
             for (let c = 0; c < this.cells[t].length; c++) {
-                this.addCell(x, z, c, t, this.cells[t][c]);
-                this.addChip(x, z, c, t, this.paths[t][c]);
+                if (!onlyChips) { this.addCell(x, z, c, t, this.cells[t][c]); }
+
+                if (!onlyCells) { this.addChip(x, null, z, c, t, this.paths[t][c]); }
                 x -= 10;
             }
             z -= 10;
         }
     }
 
-    addChip(x, z, col, row, range) {
+    addChip(x, y = 0, z, col, row, range) {
         if (range !== 0) {
             const chip = new Chip(row + '_' + col, this.settings, range);
-            chip.moveTo(x, 0, z);
+            chip.moveTo(x, y, z);
             this.renderer.addToScene(chip.mesh);
             this._chipsMeshs.push(chip);
         }
@@ -111,11 +124,11 @@ export default class Desk {
 
     movePiece(pieceName, cellName, anim, clbck) {
         let chipMesh = this.findChip(pieceName);
-
+    
         if (chipMesh) {
             let cellTo = this.findCell(cellName),
                 pos = cellTo.getPosition();
-
+            
             if (anim) {
                 this._animator.animationMove(pos, chipMesh, clbck);
             } else {
